@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ขาหมู รสสยาม - คิวออเดอร์</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+    body {
+      font-family: 'TH Sarabun New', 'Kanit', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: transparent;
+      color: #333;
+    }
+    header {
+      background-color: #a52a2a;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    header img {
+      height: 100px;
+      margin-right: 15px;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+      font-family: 'TH Sarabun New', sans-serif;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding: 10px 20px 30px;
+      position: relative;
+    }
+    .section {
+      width: 45%;
+      min-width: 300px;
+    }
+    .section h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #a52a2a;
+      font-family: 'TH Sarabun New', sans-serif;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+    .section h2 img {
+      height: 120px;
+    }
+    .orders {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      justify-items: center;
+    }
+    .order-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      border-radius: 12px;
+      border: 2px solid white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      background-color: #fff;
+      width: 95%;
+      max-width: 180px;
+      justify-content: center;
+    }
+    .order-number {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    .divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background-color: #ccc;
+      transform: translateX(-50%);
+    }
+    @media (max-width: 768px) {
+      .orders {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      header img {
+        margin: 0;
+      }
+      .divider {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
+    <h1>ขาหมู รสสยาม</h1>
+  </header>
+  <!-- ไม่มี inputSection -->
+  <div class="container">
+    <div class="divider"></div>
+    <div class="section">
+      <h2>
+        <img src="https://i.postimg.cc/4NpGymRV/GIF-no-BG.gif" alt="กำลังเตรียมอาหาร" />
+        กำลังเตรียมอาหาร
+      </h2>
+      <div id="preparing" class="orders"></div>
+    </div>
+    <div class="section">
+      <h2>
+        พร้อมส่ง
+        <img src="https://i.postimg.cc/153shT2b/Copy-of-Untitled-Design-3.gif" alt="พร้อมส่ง" />
+      </h2>
+      <div id="ready" class="orders"></div>
+    </div>
+  </div>
+  <script>
+    // ดึงข้อมูลจาก Ros-Siam5
+    async function fetchOrders() {
+      try {
+        const res = await fetch('https://ros-siam.github.io/Ros-Siam5.github.io/');
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // กำลังเตรียมอาหาร
+        const cookingEls = doc.querySelectorAll('#cookingList .order-item');
+        // พร้อมส่ง
+        const readyEls = doc.querySelectorAll('#readyList .order-item');
+
+        // ดึงเฉพาะเลขออเดอร์ (textContent)
+        const preparing = Array.from(cookingEls).map(el => el.textContent.trim()).filter(Boolean);
+        const ready = Array.from(readyEls).map(el => el.textContent.trim()).filter(Boolean);
+
+        return { preparing, ready };
+      } catch (err) {
+        return { preparing: [], ready: [] };
+      }
+    }
+
+    function renderOrders(div, nums) {
+      div.innerHTML = '';
+      nums.forEach(num => {
+        const row = document.createElement('div');
+        row.className = 'order-row';
+        row.innerHTML = `<span class="order-number">${num}</span>`;
+        div.appendChild(row);
+      });
+    }
+
+    async function updateOrders() {
+      const {preparing, ready} = await fetchOrders();
+      renderOrders(document.getElementById('preparing'), preparing);
+      renderOrders(document.getElementById('ready'), ready);
+    }
+
+    updateOrders();
+    setInterval(updateOrders, 5000);
+  </script>
+</body>
+</html>

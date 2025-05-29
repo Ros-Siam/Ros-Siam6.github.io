@@ -70,28 +70,30 @@
     .section h2 img {
       height: 120px;
     }
+    /* ปรับ grid เป็น 4 columns ต่อฝั่ง */
     .orders {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px; /* ลดจาก 15px เป็น 14px ตามขอบเขตโจทย์ */
       justify-items: center;
     }
+    /* กรอบออเดอร์: ลด padding ซ้ายขวาบนล่างลงทีละ 1px */
     .order-row {
       display: flex;
       align-items: center;
-      padding: 5px 8px;         /* ตามที่ระบุ */
+      padding: 4px 7px;     /* เดิม 5px 8px */
       border-radius: 12px;
       border: 2px solid white;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       background-color: #fff;
       width: 95%;
-      max-width: 120px;         /* ตามที่ระบุ */
+      max-width: 120px;
       min-width: 0;
       justify-content: center;
-      gap: 5px;                 /* ตามที่ระบุ */
+      gap: 4px;             /* เดิม 5px */
     }
     .order-number {
-      font-size: 2em;           /* ใหญ่และตัวหนา */
+      font-size: 2em;
       font-weight: bold;
       line-height: 1;
       display: flex;
@@ -101,7 +103,7 @@
     .order-icon {
       display: flex;
       align-items: center;
-      height: 2.2em; /* สูงเท่าโลโก้ */
+      height: 2.2em;
       margin-right: 0px;
     }
     .grab-logo, .lineman-logo {
@@ -121,9 +123,17 @@
       background-color: #ccc;
       transform: translateX(-50%);
     }
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       .orders {
         grid-template-columns: repeat(2, 1fr);
+      }
+      .section {
+        min-width: 0;
+      }
+    }
+    @media (max-width: 600px) {
+      .orders {
+        grid-template-columns: repeat(1, 1fr);
       }
       header {
         flex-direction: column;

@@ -89,7 +89,6 @@
       min-width: 0;
       justify-content: center;
       gap: 4px;
-      margin-bottom: 2px;
     }
     .order-number {
       font-size: 2em;
@@ -214,7 +213,6 @@
       }
     }
 
-    // อัปเดต/เรียง DOM เฉพาะที่เปลี่ยนจริง (ลื่น ไม่กระพริบ)
     function createOrderRow(orderNum) {
       const logoHtml = getOrderLogo(orderNum);
       const div = document.createElement('div');
@@ -224,33 +222,34 @@
       return div;
     }
 
+    // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
     function updateOrders(container, orders) {
-      // สร้าง Map ของ orderNumber → DOM
-      const nodeMap = {};
-      Array.from(container.children).forEach(child => {
-        nodeMap[child.dataset.orderNum] = child;
+      const existingNodes = Array.from(container.children);
+      const existingMap = {};
+      existingNodes.forEach(node => {
+        existingMap[node.dataset.orderNum] = node;
       });
 
-      // สร้าง DocumentFragment เพื่อจัด DOM ตามลำดับข้อมูล
-      const fragment = document.createDocumentFragment();
+      let index = 0;
       orders.forEach(order => {
         const orderNum = order.orderNumber;
-        let node = nodeMap[orderNum];
+        let node = existingMap[orderNum];
+
         if (!node) {
+          // ถ้ายังไม่มี สร้างใหม่
           node = createOrderRow(orderNum);
+          container.insertBefore(node, container.children[index]);
+        } else if (container.children[index] !== node) {
+          // ถ้ามีอยู่แต่ลำดับเปลี่ยน → ย้ายไปตำแหน่งใหม่
+          container.insertBefore(node, container.children[index]);
         }
-        fragment.appendChild(node);
-        nodeMap[orderNum] = null; // mark ว่าใช้ไปแล้ว
+
+        index++;
+        delete existingMap[orderNum]; // ถูกใช้ไปแล้ว
       });
 
-      // ลบ node ที่ไม่มีในข้อมูลใหม่แล้ว
-      Object.values(nodeMap).forEach(node => {
-        if (node) node.remove();
-      });
-
-      // ใส่ fragment กลับเข้า container (replace children)
-      container.innerHTML = '';
-      container.appendChild(fragment);
+      // ลบ node ที่ไม่อยู่ใน orders แล้ว
+      Object.values(existingMap).forEach(node => node.remove());
     }
 
     db.collection('orders_1').orderBy('timestamp')

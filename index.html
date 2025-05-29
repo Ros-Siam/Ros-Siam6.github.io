@@ -82,7 +82,7 @@
     .order-icon {
       display: flex;
       align-items: center;
-      height: 1.5em;
+      height: 1.4em;
       margin-right: 7px;
     }
     .grab-logo, .lineman-logo {
@@ -166,7 +166,6 @@
     const readyDiv = document.getElementById('ready');
 
     function getOrderLogo(orderNum) {
-      // 3 หลัก = Grab, 4 หลัก = Lineman
       if (String(orderNum).length === 3) {
         return `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
       } else if (String(orderNum).length === 4) {

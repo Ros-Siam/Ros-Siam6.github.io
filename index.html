@@ -214,6 +214,7 @@
       }
     }
 
+    // อัปเดต/เรียง DOM เฉพาะที่เปลี่ยนจริง (ลื่น ไม่กระพริบ)
     function createOrderRow(orderNum) {
       const logoHtml = getOrderLogo(orderNum);
       const div = document.createElement('div');
@@ -223,39 +224,50 @@
       return div;
     }
 
-    function findOrderDiv(container, orderNum) {
-      return container.querySelector(`.order-row[data-order-num="${orderNum}"]`);
+    function updateOrders(container, orders) {
+      // สร้าง Map ของ orderNumber → DOM
+      const nodeMap = {};
+      Array.from(container.children).forEach(child => {
+        nodeMap[child.dataset.orderNum] = child;
+      });
+
+      // สร้าง DocumentFragment เพื่อจัด DOM ตามลำดับข้อมูล
+      const fragment = document.createDocumentFragment();
+      orders.forEach(order => {
+        const orderNum = order.orderNumber;
+        let node = nodeMap[orderNum];
+        if (!node) {
+          node = createOrderRow(orderNum);
+        }
+        fragment.appendChild(node);
+        nodeMap[orderNum] = null; // mark ว่าใช้ไปแล้ว
+      });
+
+      // ลบ node ที่ไม่มีในข้อมูลใหม่แล้ว
+      Object.values(nodeMap).forEach(node => {
+        if (node) node.remove();
+      });
+
+      // ใส่ fragment กลับเข้า container (replace children)
+      container.innerHTML = '';
+      container.appendChild(fragment);
     }
 
     db.collection('orders_1').orderBy('timestamp')
       .onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
-          const data = change.doc.data();
-          const orderNum = data.orderNumber;
-          const status = data.status;
-          if (!orderNum) return;
-          let container;
-          if (status === 'preparing') container = preparingDiv;
-          else if (status === 'ready') container = readyDiv;
-          else return;
-
-          if (change.type === 'added') {
-            // เพิ่มใหม่
-            // ป้องกันซ้ำ: ถ้ามีอยู่แล้วในอีกฝั่ง ให้ลบทิ้งก่อน
-            let oldDiv = findOrderDiv(preparingDiv, orderNum) || findOrderDiv(readyDiv, orderNum);
-            if (oldDiv) oldDiv.remove();
-            container.appendChild(createOrderRow(orderNum));
-          } else if (change.type === 'modified') {
-            // ย้ายฝั่ง/แก้ไข
-            let oldDiv = findOrderDiv(preparingDiv, orderNum) || findOrderDiv(readyDiv, orderNum);
-            if (oldDiv) oldDiv.remove();
-            container.appendChild(createOrderRow(orderNum));
-          } else if (change.type === 'removed') {
-            // ลบ
-            let oldDiv = findOrderDiv(preparingDiv, orderNum) || findOrderDiv(readyDiv, orderNum);
-            if (oldDiv) oldDiv.remove();
+        const preparingOrders = [];
+        const readyOrders = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (!data.orderNumber) return;
+          if (data.status === 'preparing') {
+            preparingOrders.push(data);
+          } else if (data.status === 'ready') {
+            readyOrders.push(data);
           }
         });
+        updateOrders(preparingDiv, preparingOrders);
+        updateOrders(readyDiv, readyOrders);
       }, err => {
         preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
         readyDiv.innerHTML = '';

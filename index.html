@@ -79,29 +79,34 @@
     .order-row {
       display: flex;
       align-items: center;
-      padding: 5px 8px; /* ลด padding ลงครึ่ง */
+      padding: 10px 18px; /* เพิ่ม padding */
       border-radius: 12px;
       border: 2px solid white;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       background-color: #fff;
       width: 95%;
-      max-width: 90px; /* ลด max-width ลงครึ่ง */
+      max-width: 170px; /* เพิ่มความยาวกรอบ */
+      min-width: 120px;
       justify-content: center;
-      gap: 5px; /* ลดช่องว่างระหว่าง logo กับเลข */
+      gap: 10px;
     }
     .order-number {
-      font-size: 1.2rem;
+      font-size: 2em; /* ให้สูงใกล้เคียงโลโก้ */
       font-weight: bold;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      height: 2em; /* ให้ความสูงใกล้เคียงโลโก้ */
     }
     .order-icon {
       display: flex;
       align-items: center;
-      height: 2.8em; /* สูงเท่า logo */
+      height: 2em; /* สูงเท่าโลโก้ */
       margin-right: 0px;
     }
     .grab-logo, .lineman-logo {
-      width: 2.8em;
-      height: 2.8em;
+      width: 1.8em;  /* เล็กลงกว่าของเดิม */
+      height: 1.8em;
       display: inline-block;
       object-fit: contain;
       border-radius: 3px;
@@ -144,7 +149,7 @@
       ขาหมู รสสยาม
      <img 
       class="qr-code"
-      src="https://i.postimg.cc/rFF7M1LF/QR-Code.png"
+      src="https://i.postimg.cc/4NxtPdpS/QR-Code-Rossiam.png"
       alt="QR Code"
      />
     </h1>

@@ -22,7 +22,7 @@
       align-items: center;
       justify-content: center;
     }
-    header img {
+    header img.logo-img {
       height: 100px;
       margin-right: 15px;
     }
@@ -30,6 +30,19 @@
       font-size: 3rem;
       margin: 0;
       font-family: 'TH Sarabun New', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .qr-code {
+      vertical-align: middle;
+      margin-left: 5px;
+      border-radius: 10px;
+      border: 2px solid #a52a2a;
+      background: #fff;
+      width: 90px;
+      height: 90px;
+      box-shadow: 0 2px 8px rgba(165,42,42,0.09);
     }
     .container {
       display: flex;
@@ -110,19 +123,30 @@
         flex-direction: column;
         gap: 10px;
       }
-      header img {
+      header img.logo-img {
         margin: 0;
       }
       .divider {
         display: none;
+      }
+      header h1 {
+        flex-direction: column;
+        gap: 12px;
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
-    <h1>ขาหมู รสสยาม</h1>
+    <img class="logo-img" src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
+    <h1>
+      ขาหมู รสสยาม
+      <img 
+        class="qr-code"
+        src="https://api.qrserver.com/v1/create-qr-code/?data=https://ros-siam.github.io/Ros-Siam6.github.io/&size=120x120&color=a5-2a-2a&bgcolor=ff-ff-ff"
+        alt="QR Code"
+      />
+    </h1>
   </header>
   <div class="container">
     <div class="divider"></div>

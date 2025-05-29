@@ -6,24 +6,101 @@
   <title>ขาหมู รสสยาม - คิวออเดอร์</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
-    body { font-family: 'TH Sarabun New', 'Kanit', sans-serif; margin: 0; padding: 0; background-color: transparent; color: #333; }
-    header { background-color: #a52a2a; color: white; text-align: center; padding: 10px; display: flex; align-items: center; justify-content: center; }
-    header img { height: 100px; margin-right: 15px; }
-    header h1 { font-size: 3rem; margin: 0; font-family: 'TH Sarabun New', sans-serif; }
-    .container { display: flex; justify-content: space-between; flex-wrap: wrap; padding: 10px 20px 30px; position: relative; }
-    .section { width: 45%; min-width: 300px; }
-    .section h2 { text-align: center; font-size: 2.2rem; color: #a52a2a; font-family: 'TH Sarabun New', sans-serif; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 15px; }
-    .section h2 img { height: 120px; }
-    .orders { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; justify-items: center; }
-    .order-row { display: flex; align-items: center; padding: 10px 15px; border-radius: 12px; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.1); background-color: #fff; width: 95%; max-width: 180px; justify-content: center; }
-    .order-row img { height: 40px; margin-right: 10px; }
-    .order-number { font-size: 1.8rem; font-weight: bold; }
-    .divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background-color: #ccc; transform: translateX(-50%); }
+    body {
+      font-family: 'TH Sarabun New', 'Kanit', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: transparent;
+      color: #333;
+    }
+    header {
+      background-color: #a52a2a;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    header img {
+      height: 100px;
+      margin-right: 15px;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+      font-family: 'TH Sarabun New', sans-serif;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding: 10px 20px 30px;
+      position: relative;
+    }
+    .section {
+      width: 45%;
+      min-width: 300px;
+    }
+    .section h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #a52a2a;
+      font-family: 'TH Sarabun New', sans-serif;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+    .section h2 img {
+      height: 120px;
+    }
+    .orders {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      justify-items: center;
+    }
+    .order-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      border-radius: 12px;
+      border: 2px solid white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      background-color: #fff;
+      width: 95%;
+      max-width: 180px;
+      justify-content: center;
+    }
+    .order-number {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    .divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background-color: #ccc;
+      transform: translateX(-50%);
+    }
     @media (max-width: 768px) {
-      .orders { grid-template-columns: repeat(2, 1fr); }
-      header { flex-direction: column; gap: 10px; }
-      header img { margin: 0; }
-      .divider { display: none; }
+      .orders {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      header img {
+        margin: 0;
+      }
+      .divider {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -49,20 +126,19 @@
       <div id="ready" class="orders"></div>
     </div>
   </div>
-
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    // ใช้ firebaseConfig ที่คุณให้มา
+    // === Firebase config ===
     const firebaseConfig = {
       apiKey: "AIzaSyCFisUUeCGCvL3_3XK3t_OStyO3f24A238",
       authDomain: "ros-siam-queue-management.firebaseapp.com",
       projectId: "ros-siam-queue-management",
-      storageBucket: "ros-siam-queue-management.firebasestorage.app",
+      storageBucket: "ros-siam-queue-management.appspot.com",
       messagingSenderId: "790945202211",
-      appId: "1:790945202211:web:0d6ea426bb3a1b3b843196",
-      measurementId: "G-3H73HZB651"
+      appId: "1:790945202211:web:d9df471dbd9fca8d843196",
+      measurementId: "G-V3KN3LCMY7"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -70,7 +146,6 @@
     const preparingDiv = document.getElementById('preparing');
     const readyDiv = document.getElementById('ready');
 
-    // ฟังก์ชันวาด order
     function renderOrders(snapshot) {
       preparingDiv.innerHTML = '';
       readyDiv.innerHTML = '';
@@ -79,7 +154,6 @@
         const orderNum = data.orderNumber;
         const status = data.status;
         if (!orderNum) return;
-        // แสดงแค่เลขออเดอร์ (ไม่มีปุ่ม, ไม่มี input)
         const orderHTML = `
           <div class="order-row">
             <span class="order-number">${orderNum}</span>
@@ -93,15 +167,15 @@
       });
     }
 
-    // subscribe ข้อมูลเรียลไทม์
-    function listenOrders() {
-      db.collection('orders').orderBy('timestamp')
-        .onSnapshot(snapshot => {
-          renderOrders(snapshot);
-        });
-    }
-
-    listenOrders();
+    // อ่านข้อมูลแบบ realtime จาก collection orders_1
+    db.collection('orders_1').orderBy('timestamp')
+      .onSnapshot(snapshot => {
+        renderOrders(snapshot);
+      }, err => {
+        preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
+        readyDiv.innerHTML = '';
+        console.error(err);
+      });
   </script>
 </body>
 </html>

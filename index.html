@@ -89,6 +89,7 @@
       min-width: 0;
       justify-content: center;
       gap: 4px;
+      margin-bottom: 2px;
     }
     .order-number {
       font-size: 2em;
@@ -213,34 +214,56 @@
       }
     }
 
-    function renderOrders(snapshot) {
-      // สร้าง array เก็บ HTML
-      const preparingOrders = [];
-      const readyOrders = [];
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const orderNum = data.orderNumber;
-        const status = data.status;
-        if (!orderNum) return;
-        const logoHtml = getOrderLogo(orderNum);
-        const orderHTML = `
-          <div class="order-row">
-            ${logoHtml}<span class="order-number">${orderNum}</span>
-          </div>
-        `;
-        if (status === 'preparing') {
-          preparingOrders.push(orderHTML);
-        } else if (status === 'ready') {
-          readyOrders.push(orderHTML);
-        }
-      });
-      // set innerHTML ทีเดียว
-      preparingDiv.innerHTML = preparingOrders.join('');
-      readyDiv.innerHTML = readyOrders.join('');
+    // สร้าง <div> ของคิวแต่ละอัน
+    function createOrderRow(orderNum) {
+      const logoHtml = getOrderLogo(orderNum);
+      const div = document.createElement('div');
+      div.className = 'order-row';
+      div.dataset.orderNum = orderNum;
+      div.innerHTML = `${logoHtml}<span class="order-number">${orderNum}</span>`;
+      return div;
     }
 
+    // หาคิวใน container (ฝั่ง preparing/ready)
+    function findOrderDiv(container, orderNum) {
+      return container.querySelector(`.order-row[data-order-num="${orderNum}"]`);
+    }
+
+    // จัดเก็บ order ที่แสดงอยู่ในแต่ละฝั่ง (สำหรับลบ/ย้าย)
+    const orderStatusMap = new Map();
+
     db.collection('orders_1').orderBy('timestamp')
-      .onSnapshot(renderOrders, err => {
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          const data = change.doc.data();
+          const orderNum = data.orderNumber;
+          const status = data.status;
+          if (!orderNum) return;
+          let container;
+          if (status === 'preparing') container = preparingDiv;
+          else if (status === 'ready') container = readyDiv;
+          else return;
+
+          if (change.type === 'added') {
+            // ป้องกันซ้ำ: ถ้ามีอยู่แล้วในอีกฝั่ง ให้ลบทิ้งก่อน
+            let oldDiv = findOrderDiv(preparingDiv, orderNum) || findOrderDiv(readyDiv, orderNum);
+            if (oldDiv) oldDiv.remove();
+            container.appendChild(createOrderRow(orderNum));
+            orderStatusMap.set(orderNum, status);
+          } else if (change.type === 'modified') {
+            // ย้ายฝั่ง/แก้ไข
+            let oldDiv = findOrderDiv(preparingDiv, orderNum) || findOrderDiv(readyDiv, orderNum);
+            if (oldDiv) oldDiv.remove();
+            container.appendChild(createOrderRow(orderNum));
+            orderStatusMap.set(orderNum, status);
+          } else if (change.type === 'removed') {
+            // ลบ
+            let oldDiv = findOrderDiv(preparingDiv, orderNum) || findOrderDiv(readyDiv, orderNum);
+            if (oldDiv) oldDiv.remove();
+            orderStatusMap.delete(orderNum);
+          }
+        });
+      }, err => {
         preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
         readyDiv.innerHTML = '';
         console.error(err);

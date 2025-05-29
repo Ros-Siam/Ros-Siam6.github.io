@@ -73,10 +73,25 @@
       width: 95%;
       max-width: 180px;
       justify-content: center;
+      gap: 10px;
     }
     .order-number {
       font-size: 1.8rem;
       font-weight: bold;
+    }
+    .order-icon {
+      display: flex;
+      align-items: center;
+      height: 1.5em;
+      margin-right: 7px;
+    }
+    .grab-logo, .lineman-logo {
+      width: 1.4em;
+      height: 1.4em;
+      display: inline-block;
+      object-fit: contain;
+      border-radius: 3px;
+      background: #fff;
     }
     .divider {
       position: absolute;
@@ -143,8 +158,23 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // โลโก้
+    const grabLogoUrl = "https://drive.google.com/thumbnail?id=1vhOumfzWD7xseUY1YMqfHab7fdbln_Mg";
+    const linemanLogoUrl = "https://drive.google.com/thumbnail?id=1WmMY7RkgnNNJBMLiid2OMevP0d4a-Dgq";
+
     const preparingDiv = document.getElementById('preparing');
     const readyDiv = document.getElementById('ready');
+
+    function getOrderLogo(orderNum) {
+      // 3 หลัก = Grab, 4 หลัก = Lineman
+      if (String(orderNum).length === 3) {
+        return `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
+      } else if (String(orderNum).length === 4) {
+        return `<span class="order-icon"><img class="lineman-logo" src="${linemanLogoUrl}" alt="Lineman"></span>`;
+      } else {
+        return '';
+      }
+    }
 
     function renderOrders(snapshot) {
       preparingDiv.innerHTML = '';
@@ -154,9 +184,10 @@
         const orderNum = data.orderNumber;
         const status = data.status;
         if (!orderNum) return;
+        const logoHtml = getOrderLogo(orderNum);
         const orderHTML = `
           <div class="order-row">
-            <span class="order-number">${orderNum}</span>
+            ${logoHtml}<span class="order-number">${orderNum}</span>
           </div>
         `;
         if (status === 'preparing') {

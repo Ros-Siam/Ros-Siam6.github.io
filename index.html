@@ -237,10 +237,10 @@
     // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
     function updateOrders(container, orders) {
       const fragment = document.createDocumentFragment(); // สร้าง DocumentFragment
-
-      // 1. สร้าง Map ของ existing nodes
       const existingNodes = Array.from(container.children);
       const existingMap = {};
+
+      // 1. สร้าง Map ของ existing nodes
       existingNodes.forEach(node => {
         existingMap[node.dataset.orderNum] = node;
       });
@@ -268,7 +268,9 @@
       Object.values(existingMap).forEach(node => node.remove());
 
       // Append the fragment to the container
-      container.appendChild(fragment);
+      requestAnimationFrame(() => {
+        container.appendChild(fragment);
+      });
     }
 
     // Debounce function เพื่อลดความถี่ในการ update

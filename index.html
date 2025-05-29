@@ -70,18 +70,16 @@
     .section h2 img {
       height: 120px;
     }
-    /* ปรับ grid เป็น 4 columns ต่อฝั่ง */
     .orders {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px; /* ลดจาก 15px เป็น 14px ตามขอบเขตโจทย์ */
+      gap: 14px;
       justify-items: center;
     }
-    /* กรอบออเดอร์: ลด padding ซ้ายขวาบนล่างลงทีละ 1px */
     .order-row {
       display: flex;
       align-items: center;
-      padding: 4px 7px;     /* เดิม 5px 8px */
+      padding: 4px 7px;
       border-radius: 12px;
       border: 2px solid white;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
@@ -90,7 +88,7 @@
       max-width: 120px;
       min-width: 0;
       justify-content: center;
-      gap: 4px;             /* เดิม 5px */
+      gap: 4px;
     }
     .order-number {
       font-size: 2em;
@@ -159,7 +157,7 @@
       ขาหมู รสสยาม
      <img 
       class="qr-code"
-      src="https://i.postimg.cc/rFF7M1LF/QR-Code.png"
+      src="https://i.postimg.cc/4NxtPdpS/QR-Code-Rossiam.png"
       alt="QR Code"
      />
     </h1>
@@ -216,8 +214,9 @@
     }
 
     function renderOrders(snapshot) {
-      preparingDiv.innerHTML = '';
-      readyDiv.innerHTML = '';
+      // สร้าง array เก็บ HTML
+      const preparingOrders = [];
+      const readyOrders = [];
       snapshot.forEach(doc => {
         const data = doc.data();
         const orderNum = data.orderNumber;
@@ -230,18 +229,18 @@
           </div>
         `;
         if (status === 'preparing') {
-          preparingDiv.innerHTML += orderHTML;
+          preparingOrders.push(orderHTML);
         } else if (status === 'ready') {
-          readyDiv.innerHTML += orderHTML;
+          readyOrders.push(orderHTML);
         }
       });
+      // set innerHTML ทีเดียว
+      preparingDiv.innerHTML = preparingOrders.join('');
+      readyDiv.innerHTML = readyOrders.join('');
     }
 
-    // อ่านข้อมูลแบบ realtime จาก collection orders_1
     db.collection('orders_1').orderBy('timestamp')
-      .onSnapshot(snapshot => {
-        renderOrders(snapshot);
-      }, err => {
+      .onSnapshot(renderOrders, err => {
         preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
         readyDiv.innerHTML = '';
         console.error(err);

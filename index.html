@@ -89,6 +89,8 @@
       min-width: 0;
       justify-content: center;
       gap: 4px;
+      /* เพิ่ม will-change เพื่อ optimize animation */
+      will-change: transform;
     }
     .order-number {
       font-size: 2em;
@@ -147,10 +149,6 @@
         flex-direction: column;
         gap: 12px;
       }
-    }
-    /* เพิ่ม will-change เพื่อ optimize animation */
-    .order-row {
-      will-change: transform;
     }
   </style>
 </head>
@@ -238,6 +236,8 @@
 
     // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
     function updateOrders(container, orders) {
+      const fragment = document.createDocumentFragment(); // สร้าง DocumentFragment
+
       // 1. สร้าง Map ของ existing nodes
       const existingNodes = Array.from(container.children);
       const existingMap = {};
@@ -254,7 +254,7 @@
         if (!node) {
           // ถ้ายังไม่มี สร้างใหม่
           node = createOrderRow(orderNum);
-          container.insertBefore(node, container.children[index]);
+          fragment.appendChild(node); // append to fragment
         } else if (container.children[index] !== node) {
           // ถ้ามีอยู่แต่ลำดับเปลี่ยน → ย้ายไปตำแหน่งใหม่
           container.insertBefore(node, container.children[index]);
@@ -266,6 +266,9 @@
 
       // 3. ลบ node ที่ไม่อยู่ใน orders แล้ว
       Object.values(existingMap).forEach(node => node.remove());
+
+      // Append the fragment to the container
+      container.appendChild(fragment);
     }
 
     // Debounce function เพื่อลดความถี่ในการ update

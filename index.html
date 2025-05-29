@@ -1,277 +1,119 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ขาหมู รสสยาม - คิวออเดอร์</title>
+  <meta charset="UTF-8">
+  <title>Queue Display</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
     body {
-      font-family: 'TH Sarabun New', 'Kanit', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: transparent;
-      color: #333;
-    }
-    header {
-      background-color: #a52a2a;
-      color: white;
-      text-align: center;
-      padding: 10px;
+      font-family: sans-serif;
+      background-image: url('https://i.imgur.com/ah9IPV9.png'); /* โลโก้ขาหมูรสสยามจางๆ */
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 60%;
+      background-color: #fff;
       display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    header img.logo-img {
-      height: 100px;
-      margin-right: 15px;
-    }
-    header h1 {
-      font-size: 3rem;
-      margin: 0;
-      font-family: 'TH Sarabun New', sans-serif;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-    .qr-code {
-      vertical-align: middle;
-      margin-left: 15px;
-      border-radius: 10px;
-      border: 2px solid #a52a2a;
-      background: #fff;
-      width: 90px;
-      height: 90px;
-      box-shadow: 0 2px 8px rgba(165,42,42,0.09);
-      object-fit: cover;
-    }
-    .container {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      padding: 10px 20px 30px;
-      position: relative;
+      justify-content: space-around;
+      padding: 40px;
     }
     .section {
-      width: 45%;
-      min-width: 300px;
+      width: 40%;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
-    .section h2 {
+    h2 {
       text-align: center;
-      font-size: 2.2rem;
-      color: #a52a2a;
-      font-family: 'TH Sarabun New', sans-serif;
-      margin-bottom: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
+      font-size: 28px;
+      margin-bottom: 20px;
     }
-    .section h2 img {
-      height: 120px;
-    }
-    .orders {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      justify-items: center;
-    }
-    .order-row {
-      display: flex;
-      align-items: center;
-      padding: 4px 7px;
+    .order {
+      font-size: 36px;
+      text-align: center;
+      margin: 10px 0;
+      background-color: #ffe4b5;
       border-radius: 12px;
-      border: 2px solid white;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      background-color: #fff;
-      width: 95%;
-      max-width: 120px;
-      min-width: 0;
-      justify-content: center;
-      gap: 4px;
-    }
-    .order-number {
-      font-size: 2em;
+      padding: 10px;
       font-weight: bold;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      height: 2em;
-    }
-    .order-icon {
-      display: flex;
-      align-items: center;
-      height: 2.2em;
-      margin-right: 0px;
-    }
-    .grab-logo, .lineman-logo {
-      width: 2.2em;
-      height: 2.2em;
-      display: inline-block;
-      object-fit: contain;
-      border-radius: 3px;
-      background: #fff;
-    }
-    .divider {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 3px;
-      background-color: #ccc;
-      transform: translateX(-50%);
-    }
-    @media (max-width: 900px) {
-      .orders {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .section {
-        min-width: 0;
-      }
-    }
-    @media (max-width: 600px) {
-      .orders {
-        grid-template-columns: repeat(1, 1fr);
-      }
-      header {
-        flex-direction: column;
-        gap: 10px;
-      }
-      header img.logo-img {
-        margin: 0;
-      }
-      .divider {
-        display: none;
-      }
-      header h1 {
-        flex-direction: column;
-        gap: 12px;
-      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <img class="logo-img" src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
-    <h1>
-      ขาหมู รสสยาม
-     <img 
-      class="qr-code"
-      src="https://i.postimg.cc/4NxtPdpS/QR-Code-Rossiam.png"
-      alt="QR Code"
-     />
-    </h1>
-  </header>
-  <div class="container">
-    <div class="divider"></div>
-    <div class="section">
-      <h2>
-        <img src="https://i.postimg.cc/4NpGymRV/GIF-no-BG.gif" alt="กำลังเตรียมอาหาร" />
-        กำลังเตรียมอาหาร
-      </h2>
-      <div id="preparing" class="orders"></div>
-    </div>
-    <div class="section">
-      <h2>
-        พร้อมส่ง
-        <img src="https://i.postimg.cc/153shT2b/Copy-of-Untitled-Design-3.gif" alt="พร้อมส่ง" />
-      </h2>
-      <div id="ready" class="orders"></div>
-    </div>
+
+  <div class="section" id="preparingSection">
+    <h2>กำลังเตรียมอาหาร</h2>
+    <div id="preparingOrders"></div>
   </div>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <div class="section" id="readySection">
+    <h2>พร้อมส่ง</h2>
+    <div id="readyOrders"></div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
   <script>
-    // === Firebase config ===
     const firebaseConfig = {
-      apiKey: "AIzaSyCFisUUeCGCvL3_3XK3t_OStyO3f24A238",
-      authDomain: "ros-siam-queue-management.firebaseapp.com",
-      projectId: "ros-siam-queue-management",
-      storageBucket: "ros-siam-queue-management.appspot.com",
-      messagingSenderId: "790945202211",
-      appId: "1:790945202211:web:d9df471dbd9fca8d843196",
-      measurementId: "G-V3KN3LCMY7"
+      projectId: "ros-siam-queue-management"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // โลโก้
-    const grabLogoUrl = "https://drive.google.com/thumbnail?id=1vhOumfzWD7xseUY1YMqfHab7fdbln_Mg";
-    const linemanLogoUrl = "https://drive.google.com/thumbnail?id=1WmMY7RkgnNNJBMLiid2OMevP0d4a-Dgq";
+    // เก็บสถานะปัจจุบันของ order บนหน้าจอ
+    let currentPreparing = new Set();
+    let currentReady = new Set();
 
-    const preparingDiv = document.getElementById('preparing');
-    const readyDiv = document.getElementById('ready');
+    function updateOrders(snapshot) {
+      const newPreparing = new Set();
+      const newReady = new Set();
 
-    function getOrderLogo(orderNum) {
-      if (String(orderNum).length === 3) {
-        return `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
-      } else if (String(orderNum).length === 4) {
-        return `<span class="order-icon"><img class="lineman-logo" src="${linemanLogoUrl}" alt="Lineman"></span>`;
-      } else {
-        return '';
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const orderNumber = data.orderNumber?.toString();
+        const status = data.status;
+
+        if (!orderNumber) return;
+
+        if (status === "preparing") {
+          newPreparing.add(orderNumber);
+        } else if (status === "ready") {
+          newReady.add(orderNumber);
+        }
+      });
+
+      if (!setsEqual(currentPreparing, newPreparing)) {
+        updateSection("preparingOrders", newPreparing);
+        currentPreparing = newPreparing;
+      }
+
+      if (!setsEqual(currentReady, newReady)) {
+        updateSection("readyOrders", newReady);
+        currentReady = newReady;
       }
     }
 
-    function createOrderRow(orderNum) {
-      const logoHtml = getOrderLogo(orderNum);
-      const div = document.createElement('div');
-      div.className = 'order-row';
-      div.dataset.orderNum = orderNum;
-      div.innerHTML = `${logoHtml}<span class="order-number">${orderNum}</span>`;
-      return div;
+    function updateSection(elementId, ordersSet) {
+      const container = document.getElementById(elementId);
+      container.innerHTML = ""; // ล้างก่อนแสดงใหม่แบบ smooth
+      Array.from(ordersSet).sort().forEach(order => {
+        const div = document.createElement("div");
+        div.className = "order";
+        div.textContent = order;
+        container.appendChild(div);
+      });
     }
 
-    // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
-    function updateOrders(container, orders) {
-      const existingNodes = Array.from(container.children);
-      const existingMap = {};
-      existingNodes.forEach(node => {
-        existingMap[node.dataset.orderNum] = node;
-      });
-
-      let index = 0;
-      orders.forEach(order => {
-        const orderNum = order.orderNumber;
-        let node = existingMap[orderNum];
-
-        if (!node) {
-          // ถ้ายังไม่มี สร้างใหม่
-          node = createOrderRow(orderNum);
-          container.insertBefore(node, container.children[index]);
-        } else if (container.children[index] !== node) {
-          // ถ้ามีอยู่แต่ลำดับเปลี่ยน → ย้ายไปตำแหน่งใหม่
-          container.insertBefore(node, container.children[index]);
-        }
-
-        index++;
-        delete existingMap[orderNum]; // ถูกใช้ไปแล้ว
-      });
-
-      // ลบ node ที่ไม่อยู่ใน orders แล้ว
-      Object.values(existingMap).forEach(node => node.remove());
+    function setsEqual(a, b) {
+      if (a.size !== b.size) return false;
+      for (let item of a) if (!b.has(item)) return false;
+      return true;
     }
 
-    db.collection('orders_1').orderBy('timestamp')
-      .onSnapshot(snapshot => {
-        const preparingOrders = [];
-        const readyOrders = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          if (!data.orderNumber) return;
-          if (data.status === 'preparing') {
-            preparingOrders.push(data);
-          } else if (data.status === 'ready') {
-            readyOrders.push(data);
-          }
-        });
-        updateOrders(preparingDiv, preparingOrders);
-        updateOrders(readyDiv, readyOrders);
-      }, err => {
-        preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
-        readyDiv.innerHTML = '';
-        console.error(err);
-      });
+    // เริ่มฟัง Firestore แบบ real-time
+    db.collection("orders").onSnapshot(updateOrders);
   </script>
+
 </body>
 </html>

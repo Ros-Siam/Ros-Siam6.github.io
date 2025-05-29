@@ -89,7 +89,6 @@
       min-width: 0;
       justify-content: center;
       gap: 4px;
-      margin-bottom: 2px;
     }
     .order-number {
       font-size: 2em;
@@ -149,6 +148,10 @@
         gap: 12px;
       }
     }
+    /* เพิ่ม will-change เพื่อ optimize animation */
+    .order-row {
+      will-change: transform;
+    }
   </style>
 </head>
 <body>
@@ -204,14 +207,24 @@
     const preparingDiv = document.getElementById('preparing');
     const readyDiv = document.getElementById('ready');
 
+    // สร้าง Map สำหรับเก็บ logo HTML เพื่อ reuse
+    const logoCache = {};
+
     function getOrderLogo(orderNum) {
-      if (String(orderNum).length === 3) {
-        return `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
-      } else if (String(orderNum).length === 4) {
-        return `<span class="order-icon"><img class="lineman-logo" src="${linemanLogoUrl}" alt="Lineman"></span>`;
-      } else {
-        return '';
+      const key = String(orderNum).length;
+      if (logoCache[key]) {
+        return logoCache[key];
       }
+
+      let logoHtml = '';
+      if (key === 3) {
+        logoHtml = `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
+      } else if (key === 4) {
+        logoHtml = `<span class="order-icon"><img class="lineman-logo" src="${linemanLogoUrl}" alt="Lineman"></span>`;
+      }
+
+      logoCache[key] = logoHtml;
+      return logoHtml;
     }
 
     function createOrderRow(orderNum) {
@@ -223,14 +236,16 @@
       return div;
     }
 
-    // ป้องกันกระพริบ: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
+    // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
     function updateOrders(container, orders) {
+      // 1. สร้าง Map ของ existing nodes
       const existingNodes = Array.from(container.children);
       const existingMap = {};
       existingNodes.forEach(node => {
         existingMap[node.dataset.orderNum] = node;
       });
 
+      // 2. Loop through orders และ update/move nodes
       let index = 0;
       orders.forEach(order => {
         const orderNum = order.orderNumber;
@@ -249,9 +264,24 @@
         delete existingMap[orderNum]; // ถูกใช้ไปแล้ว
       });
 
-      // ลบ node ที่ไม่อยู่ใน orders แล้ว
+      // 3. ลบ node ที่ไม่อยู่ใน orders แล้ว
       Object.values(existingMap).forEach(node => node.remove());
     }
+
+    // Debounce function เพื่อลดความถี่ในการ update
+    function debounce(func, delay) {
+      let timeout;
+      return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+      };
+    }
+
+    const debouncedUpdateOrders = debounce((preparingOrders, readyOrders) => {
+      updateOrders(preparingDiv, preparingOrders);
+      updateOrders(readyDiv, readyOrders);
+    }, 100); // ปรับ delay ได้ตามความเหมาะสม
 
     db.collection('orders_1').orderBy('timestamp')
       .onSnapshot(snapshot => {
@@ -266,8 +296,10 @@
             readyOrders.push(data);
           }
         });
-        updateOrders(preparingDiv, preparingOrders);
-        updateOrders(readyDiv, readyOrders);
+
+        // เรียก debouncedUpdateOrders แทน updateOrders โดยตรง
+        debouncedUpdateOrders(preparingOrders, readyOrders);
+
       }, err => {
         preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
         readyDiv.innerHTML = '';

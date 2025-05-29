@@ -89,6 +89,7 @@
       min-width: 0;
       justify-content: center;
       gap: 4px;
+      margin-bottom: 2px;
     }
     .order-number {
       font-size: 2em;
@@ -155,7 +156,7 @@
     <img class="logo-img" src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
     <h1>
       ขาหมู รสสยาม
-     <img
+     <img 
       class="qr-code"
       src="https://i.postimg.cc/4NxtPdpS/QR-Code-Rossiam.png"
       alt="QR Code"
@@ -203,9 +204,6 @@
     const preparingDiv = document.getElementById('preparing');
     const readyDiv = document.getElementById('ready');
 
-    let lastPreparingOrders = [];
-    let lastReadyOrders = [];
-
     function getOrderLogo(orderNum) {
       if (String(orderNum).length === 3) {
         return `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
@@ -221,51 +219,38 @@
       const div = document.createElement('div');
       div.className = 'order-row';
       div.dataset.orderNum = orderNum;
-
-      // Create logo element
-      const logoSpan = document.createElement('span');
-      logoSpan.innerHTML = logoHtml; // Use innerHTML here as it's pre-generated HTML
-      div.appendChild(logoSpan);
-
-      // Create order number element
-      const orderNumberSpan = document.createElement('span');
-      orderNumberSpan.className = 'order-number';
-      orderNumberSpan.textContent = orderNum;
-      div.appendChild(orderNumberSpan);
-
+      div.innerHTML = `${logoHtml}<span class="order-number">${orderNum}</span>`;
       return div;
     }
 
-    // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
+    // ป้องกันกระพริบ: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
     function updateOrders(container, orders) {
-      requestAnimationFrame(() => {
-        const existingNodes = Array.from(container.children);
-        const existingMap = {};
-        existingNodes.forEach(node => {
-          existingMap[node.dataset.orderNum] = node;
-        });
-
-        let index = 0;
-        orders.forEach(order => {
-          const orderNum = order.orderNumber;
-          let node = existingMap[orderNum];
-
-          if (!node) {
-            // ถ้ายังไม่มี สร้างใหม่
-            node = createOrderRow(orderNum);
-            container.insertBefore(node, container.children[index]);
-          } else if (container.children[index] !== node) {
-            // ถ้ามีอยู่แต่ลำดับเปลี่ยน → ย้ายไปตำแหน่งใหม่
-            container.insertBefore(node, container.children[index]);
-          }
-
-          index++;
-          delete existingMap[orderNum]; // ถูกใช้ไปแล้ว
-        });
-
-        // ลบ node ที่ไม่อยู่ใน orders แล้ว
-        Object.values(existingMap).forEach(node => node.remove());
+      const existingNodes = Array.from(container.children);
+      const existingMap = {};
+      existingNodes.forEach(node => {
+        existingMap[node.dataset.orderNum] = node;
       });
+
+      let index = 0;
+      orders.forEach(order => {
+        const orderNum = order.orderNumber;
+        let node = existingMap[orderNum];
+
+        if (!node) {
+          // ถ้ายังไม่มี สร้างใหม่
+          node = createOrderRow(orderNum);
+          container.insertBefore(node, container.children[index]);
+        } else if (container.children[index] !== node) {
+          // ถ้ามีอยู่แต่ลำดับเปลี่ยน → ย้ายไปตำแหน่งใหม่
+          container.insertBefore(node, container.children[index]);
+        }
+
+        index++;
+        delete existingMap[orderNum]; // ถูกใช้ไปแล้ว
+      });
+
+      // ลบ node ที่ไม่อยู่ใน orders แล้ว
+      Object.values(existingMap).forEach(node => node.remove());
     }
 
     db.collection('orders_1').orderBy('timestamp')
@@ -281,34 +266,13 @@
             readyOrders.push(data);
           }
         });
-
-        // Compare and update only if there are changes
-        if (!arraysAreEqual(preparingOrders, lastPreparingOrders)) {
-          updateOrders(preparingDiv, preparingOrders);
-          lastPreparingOrders = [...preparingOrders]; // Store a copy
-        }
-
-        if (!arraysAreEqual(readyOrders, lastReadyOrders)) {
-          updateOrders(readyDiv, readyOrders);
-          lastReadyOrders = [...readyOrders]; // Store a copy
-        }
-
+        updateOrders(preparingDiv, preparingOrders);
+        updateOrders(readyDiv, readyOrders);
       }, err => {
         preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
         readyDiv.innerHTML = '';
         console.error(err);
       });
-
-    // Helper function to compare arrays of objects
-    function arraysAreEqual(arr1, arr2) {
-      if (arr1.length !== arr2.length) return false;
-
-      for (let i = 0; i < arr1.length; i++) {
-        if (arr1[i].orderNumber !== arr2[i].orderNumber) return false; // Adjust comparison as needed
-      }
-
-      return true;
-    }
   </script>
 </body>
 </html>

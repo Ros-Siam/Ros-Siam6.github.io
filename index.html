@@ -76,7 +76,6 @@
       height: 80px;
     }
 
-    /* ===================== MARQUEE ORDERS ===================== */
     .orders-marquee-wrap {
       width: 100%;
       background: transparent;
@@ -85,11 +84,10 @@
     }
     .orders-marquee {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);   /* 5 columns */
-      grid-auto-rows: minmax(0, 1fr);
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px 12px;
       width: 100%;
       will-change: transform;
-      gap: 8px 12px;
     }
     .orders-marquee .order-row {
       display: flex;
@@ -106,7 +104,6 @@
       height: 2.2em;
       will-change: transform;
     }
-
     .order-number {
       font-size: 1.5em;
       font-weight: bold;
@@ -159,7 +156,7 @@
     @media (min-width: 601px) {
       .orders-marquee-wrap {
         overflow: hidden;
-        /* 7 rows x 2.2em + gap (6*8px = 48px) + เผื่อ padding */
+        /* 7 rows x 2.2em + gap (6*8px = 48px) + 10px padding */
         height: calc(2.2em * 7 + 48px + 10px);
         max-height: 700px;
         min-height: 220px;
@@ -167,7 +164,7 @@
       .orders-marquee-wrap::-webkit-scrollbar { display: none; }
       .orders-marquee-wrap { -ms-overflow-style: none; scrollbar-width: none; }
     }
-    /* Mobile: revert to normal scroll/grid */
+    /* Mobile: 4 columns, no marquee */
     @media (max-width: 600px) {
       .orders-marquee-wrap {
         height: auto !important;
@@ -176,8 +173,10 @@
         overflow: visible !important;
       }
       .orders-marquee {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 6px 8px;
+        will-change: unset;
+        transform: none !important;
       }
       .orders-marquee .order-row {
         font-size: 1em;
@@ -345,7 +344,7 @@
       return div;
     }
 
-    // สำหรับ marquee: ใส่ orderRows ใหม่ลงใน .orders-marquee
+    // Render orders in grid order (row-major, 5 columns per row)
     function renderOrdersMarquee(container, orders) {
       container.innerHTML = '';
       orders.forEach(order => {
@@ -355,7 +354,6 @@
       if (window.updateMarquee) window.updateMarquee();
     }
 
-    // Debounce เพื่ออัปเดต orders ใน marquee
     function debounce(func, delay) {
       let timeout;
       return function(...args) {
@@ -416,6 +414,8 @@
         if (interval) clearInterval(interval);
         reset();
         if (isMobile()) return;
+        // ต้องมีมากกว่า 35 (5x7) ถึงจะเลื่อน
+        if (marquee.children.length <= 35) return;
         // เฉพาะถ้ามีเนื้อหาสูงเกิน wrap
         if (marquee.scrollHeight <= wrap.clientHeight + 1) return;
         // สร้าง clone สำหรับ infinite loop

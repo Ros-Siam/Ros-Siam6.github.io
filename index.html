@@ -75,25 +75,39 @@
     .section h2 img {
       height: 80px;
     }
-    .orders {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 14px;
-      justify-items: center;
+
+    .orders-marquee-wrap {
+      width: 100%;
+      background: transparent;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      /* 7 rows x 2.2em + gap (6*8px = 48px) + 10px padding */
+      height: calc(2.2em * 7 + 48px + 10px);
+      max-height: 700px;
+      min-height: 220px;
     }
-    .order-row {
+    .orders-marquee {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px 12px;
+      width: 100%;
+      will-change: transform;
+      transition: none;
+    }
+    .orders-marquee .order-row {
       display: flex;
       align-items: center;
+      justify-content: center;
       padding: 4px 7px;
       border-radius: 12px;
       border: 2px solid white;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       background-color: #fff;
-      width: 95%;
-      max-width: 120px;
       min-width: 0;
-      justify-content: center;
-      gap: 4px;
+      font-size: 1.2em;
+      margin: 0;
+      height: 2.2em;
       will-change: transform;
     }
     .order-number {
@@ -128,7 +142,7 @@
       transform: translateX(-50%);
     }
     /* Tablet */
-    @media (max-width: 900px) {
+    @media (max-width: 900px) and (min-width: 601px) {
       .container {
         flex-direction: column;
         align-items: stretch;
@@ -140,113 +154,33 @@
         min-width: 0;
         margin-bottom: 24px;
       }
-      .orders {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      }
       .divider {
         display: none;
       }
     }
-    /* Mobile */
+    /* Mobile: 4 columns, no marquee */
     @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        gap: 6px;
-        padding: 8px 2vw;
+      .orders-marquee-wrap {
+        height: auto !important;
+        max-height: none !important;
+        min-height: unset !important;
+        overflow: visible !important;
       }
-      header img.logo-img {
-        margin: 0 0 3px 0;
-        height: 65px;
+      .orders-marquee {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px 8px;
+        will-change: unset;
+        transform: none !important;
       }
-      header h1 {
-        flex-direction: column;
-        font-size: 1.5rem;
-        gap: 6px;
-      }
-      .qr-code {
-        width: 55px;
-        height: 55px;
-        margin-left: 0;
-      }
-      .section h2 {
-        font-size: 1.1rem;
-        gap: 10px;
-      }
-      .section h2 img {
-        height: 40px;
-      }
-      .container {
-        flex-direction: column;
-        gap: 0;
-        padding: 5px 1vw 10px;
-      }
-      .section {
-        width: 100%;
-        min-width: 0;
-        margin-bottom: 18px;
-      }
-      .orders {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .order-row {
-        font-size: 0.98em;
-        max-width: 98vw;
-        min-width: 0;
+      .orders-marquee .order-row {
+        font-size: 1em;
         padding: 3px 3px;
-      }
-      .order-number {
-        font-size: 1.1em;
         height: 1.5em;
       }
-      .order-icon {
-        height: 1.5em;
-      }
-      .grab-logo, .lineman-logo {
-        width: 1.5em;
-        height: 1.5em;
-      }
-      .divider {
-        display: none;
-      }
-    }
-    /* ปุ่ม Fullscreen แบบ YouTube (ขีด 4 มุม) มุมขวาบน */
-    #fullscreen-toggle {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 1000;
-      background: rgba(0,0,0,0.5);
-      border: none;
-      border-radius: 6px;
-      padding: 7px 10px;
-      cursor: pointer;
-      color: white;
-      transition: background 0.2s;
-    }
-    #fullscreen-toggle:hover {
-      background: rgba(0,0,0,0.8);
-    }
-    #fullscreen-toggle svg {
-      width: 24px;
-      height: 24px;
-      vertical-align: middle;
-      fill: white;
-      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <!-- ปุ่ม Fullscreen -->
-    <button id="fullscreen-toggle" title="Fullscreen">
-      <svg id="icon-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M4 4h6V2H2v8h2V4zm16 0h-6V2h8v8h-2V4zm-6 16h6v-6h2v8h-8v-2zm-6 0v-6H2v8h8v-2H4z"/>
-      </svg>
-      <svg id="icon-exit" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M10 4v2H4v6H2V4a2 2 0 0 1 2-2h8v2h-6zm4 16v-2h6v-6h2v8a2 2 0 0 1-2 2h-8v-2h6zm6-14h-6V2h8a2 2 0 0 1 2 2v8h-2V6zm-16 8h2v6h6v2H4a2 2 0 0 1-2-2v-8h2v6z"/>
-      </svg>
-    </button>
-
   <header>
     <img class="logo-img" src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
     <h1>
@@ -265,63 +199,23 @@
         <img src="https://i.postimg.cc/4NpGymRV/GIF-no-BG.gif" alt="กำลังเตรียมอาหาร" />
         กำลังเตรียมอาหาร
       </h2>
-      <div id="preparing" class="orders"></div>
+      <div class="orders-marquee-wrap" id="preparing-marquee-wrap">
+        <div class="orders-marquee" id="preparing-orders"></div>
+      </div>
     </div>
     <div class="section">
       <h2>
         พร้อมส่ง
         <img src="https://i.postimg.cc/153shT2b/Copy-of-Untitled-Design-3.gif" alt="พร้อมส่ง" />
       </h2>
-      <div id="ready" class="orders"></div>
+      <div class="orders-marquee-wrap" id="ready-marquee-wrap">
+        <div class="orders-marquee" id="ready-orders"></div>
+      </div>
     </div>
   </div>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script>
-    // === Fullscreen Toggle Script ===
-    const btn = document.getElementById('fullscreen-toggle');
-    const iconFull = document.getElementById('icon-full');
-    const iconExit = document.getElementById('icon-exit');
-
-    function isFullscreen() {
-      return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
-    }
-
-    btn.addEventListener('click', () => {
-      if (!isFullscreen()) {
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-      }
-    });
-
-    function updateIcon() {
-      if (isFullscreen()) {
-        iconFull.style.display = 'none';
-        iconExit.style.display = '';
-      } else {
-        iconFull.style.display = '';
-        iconExit.style.display = 'none';
-      }
-    }
-
-    document.addEventListener('fullscreenchange', updateIcon);
-    document.addEventListener('webkitfullscreenchange', updateIcon);
-    document.addEventListener('msfullscreenchange', updateIcon);
-  </script>
   <script>
     // === Firebase config ===
     const firebaseConfig = {
@@ -336,31 +230,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // โลโก้
     const grabLogoUrl = "https://drive.google.com/thumbnail?id=1vhOumfzWD7xseUY1YMqfHab7fdbln_Mg";
     const linemanLogoUrl = "https://drive.google.com/thumbnail?id=1WmMY7RkgnNNJBMLiid2OMevP0d4a-Dgq";
 
-    const preparingDiv = document.getElementById('preparing');
-    const readyDiv = document.getElementById('ready');
-
-    // สร้าง Map สำหรับเก็บ logo HTML เพื่อ reuse
-    const logoCache = {};
-
     function getOrderLogo(orderNum) {
       const key = String(orderNum).length;
-      if (logoCache[key]) {
-        return logoCache[key];
-      }
-
-      let logoHtml = '';
       if (key === 3) {
-        logoHtml = `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
+        return `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
       } else if (key === 4) {
-        logoHtml = `<span class="order-icon"><img class="lineman-logo" src="${linemanLogoUrl}" alt="Lineman"></span>`;
+        return `<span class="order-icon"><img class="lineman-logo" src="${linemanLogoUrl}" alt="Lineman"></span>`;
       }
-
-      logoCache[key] = logoHtml;
-      return logoHtml;
+      return '';
     }
 
     function createOrderRow(orderNum) {
@@ -372,46 +252,27 @@
       return div;
     }
 
-    // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
-    function updateOrders(container, orders) {
-      const fragment = document.createDocumentFragment(); // สร้าง DocumentFragment
-      const existingNodes = Array.from(container.children);
-      const existingMap = {};
-
-      // 1. สร้าง Map ของ existing nodes
-      existingNodes.forEach(node => {
-        existingMap[node.dataset.orderNum] = node;
-      });
-
-      // 2. Loop through orders และ update/move nodes
-      let index = 0;
-      orders.forEach(order => {
-        const orderNum = order.orderNumber;
-        let node = existingMap[orderNum];
-
-        if (!node) {
-          // ถ้ายังไม่มี สร้างใหม่
-          node = createOrderRow(orderNum);
-          fragment.appendChild(node); // append to fragment
-        } else if (container.children[index] !== node) {
-          // ถ้ามีอยู่แต่ลำดับเปลี่ยน → ย้ายไปตำแหน่งใหม่
-          container.insertBefore(node, container.children[index]);
+    // Fill grid (row-major) order for 5x7
+    function fillGridGridMajor(orders, columns = 5, rows = 7) {
+      const grid = [];
+      for (let r = 0; r < rows; ++r) {
+        for (let c = 0; c < columns; ++c) {
+          const idx = r * columns + c;
+          if (orders[idx]) grid.push(orders[idx]);
         }
-
-        index++;
-        delete existingMap[orderNum]; // ถูกใช้ไปแล้ว
-      });
-
-      // 3. ลบ node ที่ไม่อยู่ใน orders แล้ว
-      Object.values(existingMap).forEach(node => node.remove());
-
-      // Append the fragment to the container
-      requestAnimationFrame(() => {
-        container.appendChild(fragment);
-      });
+      }
+      return grid;
     }
 
-    // Debounce function เพื่อลดความถี่ในการ update
+    function renderOrdersMarquee(container, orders) {
+      container.innerHTML = '';
+      fillGridGridMajor(orders, 5, 7).forEach(order => {
+        const div = createOrderRow(order.orderNumber);
+        container.appendChild(div);
+      });
+      if (window.updateMarquee) window.updateMarquee();
+    }
+
     function debounce(func, delay) {
       let timeout;
       return function(...args) {
@@ -421,10 +282,13 @@
       };
     }
 
+    const preparingDiv = document.getElementById('preparing-orders');
+    const readyDiv = document.getElementById('ready-orders');
+
     const debouncedUpdateOrders = debounce((preparingOrders, readyOrders) => {
-      updateOrders(preparingDiv, preparingOrders);
-      updateOrders(readyDiv, readyOrders);
-    }, 100); // ปรับ delay ได้ตามความเหมาะสม
+      renderOrdersMarquee(preparingDiv, preparingOrders);
+      renderOrdersMarquee(readyDiv, readyOrders);
+    }, 100);
 
     db.collection('orders_1').orderBy('timestamp')
       .onSnapshot(snapshot => {
@@ -439,15 +303,79 @@
             readyOrders.push(data);
           }
         });
-
-        // เรียก debouncedUpdateOrders แทน updateOrders โดยตรง
         debouncedUpdateOrders(preparingOrders, readyOrders);
-
       }, err => {
         preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
         readyDiv.innerHTML = '';
         console.error(err);
       });
+  </script>
+  <!-- Infinite Vertical Marquee Script for 5x7 grid -->
+  <script>
+  (function () {
+    function isMobile() { return window.innerWidth <= 600; }
+    function makeMarquee(wrapId, marqueeId, rows = 7, columns = 5) {
+      const wrap = document.getElementById(wrapId);
+      const marquee = document.getElementById(marqueeId);
+      let interval = null;
+      let step = 1; // px per tick
+      let tickMs = 30;
+      let pos = 0;
+      let clones = [];
+
+      function reset() {
+        pos = 0;
+        marquee.style.transform = "";
+        clones.forEach(node => node.remove());
+        clones = [];
+      }
+      function start() {
+        if (interval) clearInterval(interval);
+        reset();
+        if (isMobile()) return;
+        // เฉพาะถ้ามีเลขออเดอร์เกิน 35 (5x7)
+        if (marquee.children.length <= rows * columns) return;
+        // Clone เฉพาะ order-row 35 อันแรก
+        for (let i = 0; i < rows * columns; ++i) {
+          const orig = marquee.children[i];
+          if (orig) {
+            const clone = orig.cloneNode(true);
+            clone.classList.add('marquee-clone');
+            marquee.appendChild(clone);
+            clones.push(clone);
+          }
+        }
+        interval = setInterval(() => {
+          pos += step;
+          marquee.style.transform = `translateY(-${pos}px)`;
+          // คำนวณความสูง 7 แถว (หา order-row อันแรก)
+          let firstRow = marquee.children[0];
+          let rowHeight = firstRow ? firstRow.offsetHeight : 40;
+          let gap = 8; // px (gap จาก CSS)
+          let realHeight = (rowHeight * rows) + (gap * (rows - 1));
+          if (pos >= realHeight) {
+            pos = 0;
+            marquee.style.transform = `translateY(0px)`;
+          }
+        }, tickMs);
+      }
+      function stop() {
+        if (interval) clearInterval(interval);
+        reset();
+      }
+      window.addEventListener('resize', () => { stop(); setTimeout(start, 200); });
+      return function marqueeUpdate() { stop(); setTimeout(start, 120); };
+    }
+    window.updateMarquee = function() {
+      if (!window._preparingMarquee)
+        window._preparingMarquee = makeMarquee('preparing-marquee-wrap', 'preparing-orders', 7, 5);
+      if (!window._readyMarquee)
+        window._readyMarquee = makeMarquee('ready-marquee-wrap', 'ready-orders', 7, 5);
+      window._preparingMarquee();
+      window._readyMarquee();
+    };
+    document.addEventListener('DOMContentLoaded', window.updateMarquee);
+  })();
   </script>
 </body>
 </html>

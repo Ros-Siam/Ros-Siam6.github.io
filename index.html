@@ -210,9 +210,41 @@
         display: none;
       }
     }
+    /* ปุ่ม Fullscreen แบบ YouTube (ขีด 4 มุม) มุมขวาบน */
+    #fullscreen-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      border-radius: 6px;
+      padding: 7px 10px;
+      cursor: pointer;
+      color: white;
+      transition: background 0.2s;
+    }
+    #fullscreen-toggle:hover {
+      background: rgba(0,0,0,0.8);
+    }
+    #fullscreen-toggle svg {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+      fill: white;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
+  <!-- ปุ่ม Fullscreen -->
+  <button id="fullscreen-toggle" title="Fullscreen">
+    <!-- ไอคอนขยาย (4 มุม) -->
+    <svg id="icon-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h6V2H2v8h2V4zm16 0h-6V2h8v8h-2V4zm-6 16h6v-6h2v8h-8v-2zm-6 0v-6H2v8h8v-2H4z"/></svg>
+    <!-- ไอคอนย่อ (ออกจาก fullscreen) -->
+    <svg id="icon-exit" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 4v2H4v6H2V4a2 2 0 0 1 2-2h8v2h-6zm4 16v-2h6v-6h2v8a2 2 0 0 1-2 2h-8v-2h6zm6-14h-6V2h8a2 2 0 0 1 2 2v8h-2V6zm-16 8h2v6h6v2H4a2 2 0 0 1-2-2v-8h2v6z"/></svg>
+  </button>
+
   <header>
     <img class="logo-img" src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
     <h1>
@@ -244,6 +276,50 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    // === Fullscreen Toggle Script ===
+    const btn = document.getElementById('fullscreen-toggle');
+    const iconFull = document.getElementById('icon-full');
+    const iconExit = document.getElementById('icon-exit');
+
+    function isFullscreen() {
+      return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+    }
+
+    btn.addEventListener('click', () => {
+      if (!isFullscreen()) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+    });
+
+    function updateIcon() {
+      if (isFullscreen()) {
+        iconFull.style.display = 'none';
+        iconExit.style.display = '';
+      } else {
+        iconFull.style.display = '';
+        iconExit.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('fullscreenchange', updateIcon);
+    document.addEventListener('webkitfullscreenchange', updateIcon);
+    document.addEventListener('msfullscreenchange', updateIcon);
+  </script>
   <script>
     // === Firebase config ===
     const firebaseConfig = {

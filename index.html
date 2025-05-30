@@ -82,55 +82,28 @@
       background: transparent;
       margin: 0 auto;
       position: relative;
-      /* fit & responsive */
     }
     .orders-marquee {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);   /* 5 columns */
+      grid-auto-rows: minmax(0, 1fr);
       width: 100%;
       will-change: transform;
+      gap: 8px 12px;
     }
-    /* Hide scrollbar for marquee wrap on desktop */
-    @media (min-width: 601px) {
-      .orders-marquee-wrap {
-        overflow: hidden;
-        height: 40vh;
-        max-height: 420px;
-        min-height: 180px;
-      }
-      .orders-marquee-wrap::-webkit-scrollbar { display: none; }
-      .orders-marquee-wrap { -ms-overflow-style: none; scrollbar-width: none; }
-    }
-    /* Tablet/Mobile: revert to normal scroll/grid */
-    @media (max-width: 600px) {
-      .orders-marquee-wrap {
-        height: auto !important;
-        max-height: none !important;
-        min-height: unset !important;
-        overflow: visible !important;
-      }
-      .orders-marquee {
-        will-change: unset;
-        transform: none !important;
-      }
-    }
-
-    /* ==== restyling order-row for fit in marquee ==== */
     .orders-marquee .order-row {
       display: flex;
       align-items: center;
+      justify-content: center;
       padding: 4px 7px;
       border-radius: 12px;
       border: 2px solid white;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       background-color: #fff;
-      width: 95%;
-      max-width: 120px;
       min-width: 0;
-      justify-content: center;
-      gap: 4px;
-      margin: 0 auto 4px auto;
-      font-size: 1.4em;
+      font-size: 1.2em;
+      margin: 0;
+      height: 2.2em;
       will-change: transform;
     }
 
@@ -182,41 +155,36 @@
         display: none;
       }
     }
-    /* Mobile */
-    @media (max-width: 600px) {
-      .container {
-        flex-direction: column;
-        gap: 0;
-        padding: 5px 1vw 10px;
+    /* สำหรับ marquee 5x7 เฉพาะจอใหญ่ */
+    @media (min-width: 601px) {
+      .orders-marquee-wrap {
+        overflow: hidden;
+        /* 7 rows x 2.2em + gap (6*8px = 48px) + เผื่อ padding */
+        height: calc(2.2em * 7 + 48px + 10px);
+        max-height: 700px;
+        min-height: 220px;
       }
-      .section {
-        width: 100%;
-        min-width: 0;
-        margin-bottom: 18px;
+      .orders-marquee-wrap::-webkit-scrollbar { display: none; }
+      .orders-marquee-wrap { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+    /* Mobile: revert to normal scroll/grid */
+    @media (max-width: 600px) {
+      .orders-marquee-wrap {
+        height: auto !important;
+        max-height: none !important;
+        min-height: unset !important;
+        overflow: visible !important;
+      }
+      .orders-marquee {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px 8px;
       }
       .orders-marquee .order-row {
-        font-size: 0.98em;
-        max-width: 98vw;
-        min-width: 0;
+        font-size: 1em;
         padding: 3px 3px;
-        margin: 0 auto 3px auto;
-      }
-      .order-number {
-        font-size: 1.1em;
         height: 1.5em;
-      }
-      .order-icon {
-        height: 1.5em;
-      }
-      .grab-logo, .lineman-logo {
-        width: 1.5em;
-        height: 1.5em;
-      }
-      .divider {
-        display: none;
       }
     }
-    /* Fullscreen button styling as before */
     #fullscreen-toggle {
       position: fixed;
       top: 16px;
@@ -422,11 +390,11 @@
         console.error(err);
       });
   </script>
-  <!-- Infinite Vertical Marquee Script -->
+  <!-- Infinite Vertical Marquee Script for 5x7 grid -->
   <script>
   (function () {
     function isMobile() { return window.innerWidth <= 600; }
-    // รับ div marquee หลักและ wrap
+    // marquee for grid (5x7) - infinite vertical scroll
     function makeMarquee(wrapId, marqueeId) {
       const wrap = document.getElementById(wrapId);
       const marquee = document.getElementById(marqueeId);
@@ -444,7 +412,6 @@
           clone = null;
         }
       }
-
       function start() {
         if (interval) clearInterval(interval);
         reset();
@@ -470,12 +437,9 @@
         if (interval) clearInterval(interval);
         reset();
       }
-      // Responsive
       window.addEventListener('resize', () => { stop(); setTimeout(start, 200); });
-      // expose restart fn
       return function marqueeUpdate() { stop(); setTimeout(start, 120); };
     }
-    // Hook กับทั้งสอง div
     window.updateMarquee = function() {
       if (!window._preparingMarquee)
         window._preparingMarquee = makeMarquee('preparing-marquee-wrap', 'preparing-orders');
@@ -484,7 +448,6 @@
       window._preparingMarquee();
       window._readyMarquee();
     };
-    // เรียกตอนโหลด
     document.addEventListener('DOMContentLoaded', window.updateMarquee);
   })();
   </script>

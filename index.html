@@ -75,13 +75,48 @@
     .section h2 img {
       height: 80px;
     }
-    .orders {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 14px;
-      justify-items: center;
+
+    /* ===================== MARQUEE ORDERS ===================== */
+    .orders-marquee-wrap {
+      width: 100%;
+      background: transparent;
+      margin: 0 auto;
+      position: relative;
+      /* fit & responsive */
     }
-    .order-row {
+    .orders-marquee {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      will-change: transform;
+    }
+    /* Hide scrollbar for marquee wrap on desktop */
+    @media (min-width: 601px) {
+      .orders-marquee-wrap {
+        overflow: hidden;
+        height: 40vh;
+        max-height: 420px;
+        min-height: 180px;
+      }
+      .orders-marquee-wrap::-webkit-scrollbar { display: none; }
+      .orders-marquee-wrap { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+    /* Tablet/Mobile: revert to normal scroll/grid */
+    @media (max-width: 600px) {
+      .orders-marquee-wrap {
+        height: auto !important;
+        max-height: none !important;
+        min-height: unset !important;
+        overflow: visible !important;
+      }
+      .orders-marquee {
+        will-change: unset;
+        transform: none !important;
+      }
+    }
+
+    /* ==== restyling order-row for fit in marquee ==== */
+    .orders-marquee .order-row {
       display: flex;
       align-items: center;
       padding: 4px 7px;
@@ -94,8 +129,11 @@
       min-width: 0;
       justify-content: center;
       gap: 4px;
+      margin: 0 auto 4px auto;
+      font-size: 1.4em;
       will-change: transform;
     }
+
     .order-number {
       font-size: 1.5em;
       font-weight: bold;
@@ -128,7 +166,7 @@
       transform: translateX(-50%);
     }
     /* Tablet */
-    @media (max-width: 900px) {
+    @media (max-width: 900px) and (min-width: 601px) {
       .container {
         flex-direction: column;
         align-items: stretch;
@@ -140,45 +178,12 @@
         min-width: 0;
         margin-bottom: 24px;
       }
-      .orders {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      }
       .divider {
         display: none;
-      }
-      .orders {
-        max-height: none !important;
-        overflow-y: visible !important;
       }
     }
     /* Mobile */
     @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        gap: 6px;
-        padding: 8px 2vw;
-      }
-      header img.logo-img {
-        margin: 0 0 3px 0;
-        height: 65px;
-      }
-      header h1 {
-        flex-direction: column;
-        font-size: 1.5rem;
-        gap: 6px;
-      }
-      .qr-code {
-        width: 55px;
-        height: 55px;
-        margin-left: 0;
-      }
-      .section h2 {
-        font-size: 1.1rem;
-        gap: 10px;
-      }
-      .section h2 img {
-        height: 40px;
-      }
       .container {
         flex-direction: column;
         gap: 0;
@@ -189,17 +194,12 @@
         min-width: 0;
         margin-bottom: 18px;
       }
-      .orders {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        max-height: none !important;
-        overflow-y: visible !important;
-      }
-      .order-row {
+      .orders-marquee .order-row {
         font-size: 0.98em;
         max-width: 98vw;
         min-width: 0;
         padding: 3px 3px;
+        margin: 0 auto 3px auto;
       }
       .order-number {
         font-size: 1.1em;
@@ -216,7 +216,7 @@
         display: none;
       }
     }
-    /* ปุ่ม Fullscreen แบบ YouTube (ขีด 4 มุม) มุมขวาบน */
+    /* Fullscreen button styling as before */
     #fullscreen-toggle {
       position: fixed;
       top: 16px;
@@ -240,27 +240,18 @@
       fill: white;
       pointer-events: none;
     }
-    /* เพิ่ม autoscroll เฉพาะจอใหญ่ */
-    @media (min-width: 901px) {
-      .orders {
-        max-height: 40vh;
-        overflow-y: auto;
-        scroll-behavior: smooth;
-        position: relative;
-      }
-    }
   </style>
 </head>
 <body>
   <!-- ปุ่ม Fullscreen -->
-    <button id="fullscreen-toggle" title="Fullscreen">
-      <svg id="icon-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M4 4h6V2H2v8h2V4zm16 0h-6V2h8v8h-2V4zm-6 16h6v-6h2v8h-8v-2zm-6 0v-6H2v8h8v-2H4z"/>
-      </svg>
-      <svg id="icon-exit" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M10 4v2H4v6H2V4a2 2 0 0 1 2-2h8v2h-6zm4 16v-2h6v-6h2v8a2 2 0 0 1-2 2h-8v-2h6zm6-14h-6V2h8a2 2 0 0 1 2 2v8h-2V6zm-16 8h2v6h6v2H4a2 2 0 0 1-2-2v-8h2v6z"/>
-      </svg>
-    </button>
+  <button id="fullscreen-toggle" title="Fullscreen">
+    <svg id="icon-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M4 4h6V2H2v8h2V4zm16 0h-6V2h8v8h-2V4zm-6 16h6v-6h2v8h-8v-2zm-6 0v-6H2v8h8v-2H4z"/>
+    </svg>
+    <svg id="icon-exit" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M10 4v2H4v6H2V4a2 2 0 0 1 2-2h8v2h-6zm4 16v-2h6v-6h2v8a2 2 0 0 1-2 2h-8v-2h6zm6-14h-6V2h8a2 2 0 0 1 2 2v8h-2V6zm-16 8h2v6h6v2H4a2 2 0 0 1-2-2v-8h2v6z"/>
+    </svg>
+  </button>
 
   <header>
     <img class="logo-img" src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
@@ -280,14 +271,18 @@
         <img src="https://i.postimg.cc/4NpGymRV/GIF-no-BG.gif" alt="กำลังเตรียมอาหาร" />
         กำลังเตรียมอาหาร
       </h2>
-      <div id="preparing" class="orders"></div>
+      <div class="orders-marquee-wrap" id="preparing-marquee-wrap">
+        <div class="orders-marquee" id="preparing-orders"></div>
+      </div>
     </div>
     <div class="section">
       <h2>
         พร้อมส่ง
         <img src="https://i.postimg.cc/153shT2b/Copy-of-Untitled-Design-3.gif" alt="พร้อมส่ง" />
       </h2>
-      <div id="ready" class="orders"></div>
+      <div class="orders-marquee-wrap" id="ready-marquee-wrap">
+        <div class="orders-marquee" id="ready-orders"></div>
+      </div>
     </div>
   </div>
   <!-- Firebase SDK -->
@@ -351,29 +346,24 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // โลโก้
     const grabLogoUrl = "https://drive.google.com/thumbnail?id=1vhOumfzWD7xseUY1YMqfHab7fdbln_Mg";
     const linemanLogoUrl = "https://drive.google.com/thumbnail?id=1WmMY7RkgnNNJBMLiid2OMevP0d4a-Dgq";
 
-    const preparingDiv = document.getElementById('preparing');
-    const readyDiv = document.getElementById('ready');
+    const preparingDiv = document.getElementById('preparing-orders');
+    const readyDiv = document.getElementById('ready-orders');
 
-    // สร้าง Map สำหรับเก็บ logo HTML เพื่อ reuse
     const logoCache = {};
-
     function getOrderLogo(orderNum) {
       const key = String(orderNum).length;
       if (logoCache[key]) {
         return logoCache[key];
       }
-
       let logoHtml = '';
       if (key === 3) {
         logoHtml = `<span class="order-icon"><img class="grab-logo" src="${grabLogoUrl}" alt="Grab"></span>`;
       } else if (key === 4) {
         logoHtml = `<span class="order-icon"><img class="lineman-logo" src="${linemanLogoUrl}" alt="Lineman"></span>`;
       }
-
       logoCache[key] = logoHtml;
       return logoHtml;
     }
@@ -387,46 +377,17 @@
       return div;
     }
 
-    // โค้ดใหม่: update เฉพาะ node ที่เปลี่ยนตำแหน่งจริงๆ
-    function updateOrders(container, orders) {
-      const fragment = document.createDocumentFragment(); // สร้าง DocumentFragment
-      const existingNodes = Array.from(container.children);
-      const existingMap = {};
-
-      // 1. สร้าง Map ของ existing nodes
-      existingNodes.forEach(node => {
-        existingMap[node.dataset.orderNum] = node;
-      });
-
-      // 2. Loop through orders และ update/move nodes
-      let index = 0;
+    // สำหรับ marquee: ใส่ orderRows ใหม่ลงใน .orders-marquee
+    function renderOrdersMarquee(container, orders) {
+      container.innerHTML = '';
       orders.forEach(order => {
-        const orderNum = order.orderNumber;
-        let node = existingMap[orderNum];
-
-        if (!node) {
-          // ถ้ายังไม่มี สร้างใหม่
-          node = createOrderRow(orderNum);
-          fragment.appendChild(node); // append to fragment
-        } else if (container.children[index] !== node) {
-          // ถ้ามีอยู่แต่ลำดับเปลี่ยน → ย้ายไปตำแหน่งใหม่
-          container.insertBefore(node, container.children[index]);
-        }
-
-        index++;
-        delete existingMap[orderNum]; // ถูกใช้ไปแล้ว
+        const div = createOrderRow(order.orderNumber);
+        container.appendChild(div);
       });
-
-      // 3. ลบ node ที่ไม่อยู่ใน orders แล้ว
-      Object.values(existingMap).forEach(node => node.remove());
-
-      // Append the fragment to the container
-      requestAnimationFrame(() => {
-        container.appendChild(fragment);
-      });
+      if (window.updateMarquee) window.updateMarquee();
     }
 
-    // Debounce function เพื่อลดความถี่ในการ update
+    // Debounce เพื่ออัปเดต orders ใน marquee
     function debounce(func, delay) {
       let timeout;
       return function(...args) {
@@ -437,12 +398,9 @@
     }
 
     const debouncedUpdateOrders = debounce((preparingOrders, readyOrders) => {
-      updateOrders(preparingDiv, preparingOrders);
-      updateOrders(readyDiv, readyOrders);
-      // เรียก scroll checker ทุกครั้งหลังอัปเดต (เฉพาะจอใหญ่)
-      if (window.checkPreparing) window.checkPreparing();
-      if (window.checkReady) window.checkReady();
-    }, 100); // ปรับ delay ได้ตามความเหมาะสม
+      renderOrdersMarquee(preparingDiv, preparingOrders);
+      renderOrdersMarquee(readyDiv, readyOrders);
+    }, 100);
 
     db.collection('orders_1').orderBy('timestamp')
       .onSnapshot(snapshot => {
@@ -457,67 +415,77 @@
             readyOrders.push(data);
           }
         });
-
-        // เรียก debouncedUpdateOrders แทน updateOrders โดยตรง
         debouncedUpdateOrders(preparingOrders, readyOrders);
-
       }, err => {
         preparingDiv.innerHTML = '<div style="color:red">เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</div>';
         readyDiv.innerHTML = '';
         console.error(err);
       });
   </script>
-  <!-- Scroll Up Autoscroll สำหรับจอใหญ่ -->
+  <!-- Infinite Vertical Marquee Script -->
   <script>
-  (function() {
-    function isDesktop() {
-      return window.innerWidth > 900;
-    }
-    function autoScrollOrders(ordersDiv) {
+  (function () {
+    function isMobile() { return window.innerWidth <= 600; }
+    // รับ div marquee หลักและ wrap
+    function makeMarquee(wrapId, marqueeId) {
+      const wrap = document.getElementById(wrapId);
+      const marquee = document.getElementById(marqueeId);
       let interval = null;
-      let isHovered = false;
+      let step = 1; // px per tick
+      let tickMs = 30;
+      let pos = 0;
+      let clone = null;
 
-      function scrollStep() {
-        if (!isDesktop()) return;
-        if (isHovered) return;
-        if (ordersDiv.scrollHeight <= ordersDiv.clientHeight) return;
-        // ถ้าถึงล่างสุดแล้ว ให้กลับไปบนสุด
-        if (ordersDiv.scrollTop + ordersDiv.clientHeight >= ordersDiv.scrollHeight - 2) {
-          ordersDiv.scrollTop = 0;
-        } else {
-          ordersDiv.scrollTop += 1;
+      function reset() {
+        pos = 0;
+        marquee.style.transform = "";
+        if (clone) {
+          clone.remove();
+          clone = null;
         }
       }
+
       function start() {
         if (interval) clearInterval(interval);
-        interval = setInterval(scrollStep, 30);
+        reset();
+        if (isMobile()) return;
+        // เฉพาะถ้ามีเนื้อหาสูงเกิน wrap
+        if (marquee.scrollHeight <= wrap.clientHeight + 1) return;
+        // สร้าง clone สำหรับ infinite loop
+        clone = marquee.cloneNode(true);
+        clone.classList.add('marquee-clone');
+        clone.setAttribute('aria-hidden', 'true');
+        marquee.appendChild(clone);
+        interval = setInterval(() => {
+          pos += step;
+          marquee.style.transform = `translateY(-${pos}px)`;
+          const realHeight = marquee.scrollHeight / 2;
+          if (pos >= realHeight) {
+            pos = 0;
+            marquee.style.transform = `translateY(0px)`;
+          }
+        }, tickMs);
       }
       function stop() {
         if (interval) clearInterval(interval);
-        interval = null;
+        reset();
       }
-      ordersDiv.addEventListener('mouseenter', () => { isHovered = true; });
-      ordersDiv.addEventListener('mouseleave', () => { isHovered = false; });
-
-      function checkAndScroll() {
-        if (isDesktop() && ordersDiv.scrollHeight > ordersDiv.clientHeight) {
-          start();
-        } else {
-          stop();
-          ordersDiv.scrollTop = 0;
-        }
-      }
-      window.addEventListener('resize', checkAndScroll);
-      return checkAndScroll;
+      // Responsive
+      window.addEventListener('resize', () => { stop(); setTimeout(start, 200); });
+      // expose restart fn
+      return function marqueeUpdate() { stop(); setTimeout(start, 120); };
     }
-    // Hook กับ div ทั้งสอง
-    window.checkPreparing = autoScrollOrders(document.getElementById('preparing'));
-    window.checkReady = autoScrollOrders(document.getElementById('ready'));
-    // เริ่มแรก
-    window.addEventListener('DOMContentLoaded', function() {
-      window.checkPreparing();
-      window.checkReady();
-    });
+    // Hook กับทั้งสอง div
+    window.updateMarquee = function() {
+      if (!window._preparingMarquee)
+        window._preparingMarquee = makeMarquee('preparing-marquee-wrap', 'preparing-orders');
+      if (!window._readyMarquee)
+        window._readyMarquee = makeMarquee('ready-marquee-wrap', 'ready-orders');
+      window._preparingMarquee();
+      window._readyMarquee();
+    };
+    // เรียกตอนโหลด
+    document.addEventListener('DOMContentLoaded', window.updateMarquee);
   })();
   </script>
 </body>

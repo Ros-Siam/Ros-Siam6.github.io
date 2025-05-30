@@ -76,15 +76,17 @@
       height: 80px;
     }
 
+    /* ===================== MARQUEE ORDERS ===================== */
     .orders-marquee-wrap {
       width: 100%;
       background: transparent;
       margin: 0 auto;
       position: relative;
+      /* fit & responsive */
     }
     .orders-marquee {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, 1fr);   /* 5 columns */
       gap: 8px 12px;
       width: 100%;
       will-change: transform;
@@ -104,6 +106,7 @@
       height: 2.2em;
       will-change: transform;
     }
+
     .order-number {
       font-size: 1.5em;
       font-weight: bold;
@@ -152,13 +155,13 @@
         display: none;
       }
     }
-    /* สำหรับ marquee 5x7 เฉพาะจอใหญ่ */
+    /* สำหรับ marquee 5x8 เฉพาะจอใหญ่ */
     @media (min-width: 601px) {
       .orders-marquee-wrap {
         overflow: hidden;
-        /* 7 rows x 2.2em + gap (6*8px = 48px) + 10px padding */
-        height: calc(2.2em * 7 + 48px + 10px);
-        max-height: 700px;
+        /* 8 rows x 2.2em + gap (7*8px = 56px) + 10px padding */
+        height: calc(2.2em * 8 + 56px + 10px);
+        max-height: 800px;
         min-height: 220px;
       }
       .orders-marquee-wrap::-webkit-scrollbar { display: none; }
@@ -388,11 +391,11 @@
         console.error(err);
       });
   </script>
-  <!-- Infinite Vertical Marquee Script for 5x7 grid -->
+  <!-- Infinite Vertical Marquee Script for 5x8 grid -->
   <script>
   (function () {
     function isMobile() { return window.innerWidth <= 600; }
-    // marquee for grid (5x7) - infinite vertical scroll
+    // marquee for grid (5x8) - infinite vertical scroll
     function makeMarquee(wrapId, marqueeId) {
       const wrap = document.getElementById(wrapId);
       const marquee = document.getElementById(marqueeId);
@@ -414,8 +417,8 @@
         if (interval) clearInterval(interval);
         reset();
         if (isMobile()) return;
-        // ต้องมีมากกว่า 35 (5x7) ถึงจะเลื่อน
-        if (marquee.children.length <= 35) return;
+        // ต้องมีมากกว่า 40 (5x8) ถึงจะเลื่อน
+        if (marquee.children.length <= 40) return;
         // เฉพาะถ้ามีเนื้อหาสูงเกิน wrap
         if (marquee.scrollHeight <= wrap.clientHeight + 1) return;
         // สร้าง clone สำหรับ infinite loop

@@ -146,6 +146,10 @@
       .divider {
         display: none;
       }
+      .orders {
+        max-height: none !important;
+        overflow-y: visible !important;
+      }
     }
     /* Mobile */
     @media (max-width: 600px) {
@@ -188,6 +192,8 @@
       .orders {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
+        max-height: none !important;
+        overflow-y: visible !important;
       }
       .order-row {
         font-size: 0.98em;
@@ -210,7 +216,7 @@
         display: none;
       }
     }
-    /* ปุ่ม Fullscreen ขนาดเล็กลง */
+    /* ปุ่ม Fullscreen แบบ YouTube (ขีด 4 มุม) มุมขวาบน */
     #fullscreen-toggle {
       position: fixed;
       top: 16px;
@@ -219,31 +225,22 @@
       background: rgba(0,0,0,0.5);
       border: none;
       border-radius: 6px;
-      padding: 2px 2px;
+      padding: 7px 10px;
       cursor: pointer;
       color: white;
       transition: background 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 8px;
-      height: 8px;
-      min-width: 8px;
-      min-height: 8px;
     }
     #fullscreen-toggle:hover {
       background: rgba(0,0,0,0.8);
     }
     #fullscreen-toggle svg {
-      width: 7.2px;
-      height: 7.2px;
-      min-width: 7.2px;
-      min-height: 7.2px;
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
       fill: white;
-      display: block;
       pointer-events: none;
     }
-    /* Scroll อัตโนมัติสำหรับจอใหญ่ (PC/TV) */
+    /* เพิ่ม autoscroll เฉพาะจอใหญ่ */
     @media (min-width: 901px) {
       .orders {
         max-height: 40vh;
@@ -256,32 +253,14 @@
 </head>
 <body>
   <!-- ปุ่ม Fullscreen -->
-  <button id="fullscreen-toggle" title="Fullscreen">
-    <!-- ไอคอนขยายเต็มจอ -->
-    <svg id="icon-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <!-- ขีด 4 มุม เว้นช่องกลาง (fullscreen) -->
-      <g>
-        <rect x="3" y="3" width="3" height="1.5" rx="0.5"/>
-        <rect x="3" y="3" width="1.5" height="3" rx="0.5"/>
-        <rect x="18" y="3" width="3" height="1.5" rx="0.5"/>
-        <rect x="19.5" y="3" width="1.5" height="3" rx="0.5"/>
-        <rect x="3" y="19.5" width="3" height="1.5" rx="0.5"/>
-        <rect x="3" y="18" width="1.5" height="3" rx="0.5"/>
-        <rect x="18" y="19.5" width="3" height="1.5" rx="0.5"/>
-        <rect x="19.5" y="18" width="1.5" height="3" rx="0.5"/>
-      </g>
-    </svg>
-    <!-- ไอคอนย่อหน้าจอ -->
-    <svg id="icon-exit" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <!-- ขีดสั้น 4 เส้น ชี้เข้ากลาง (exit fullscreen) -->
-      <g>
-        <rect x="5" y="11" width="4" height="2" rx="1"/>
-        <rect x="15" y="11" width="4" height="2" rx="1"/>
-        <rect x="11" y="5" width="2" height="4" rx="1"/>
-        <rect x="11" y="15" width="2" height="4" rx="1"/>
-      </g>
-    </svg>
-  </button>
+    <button id="fullscreen-toggle" title="Fullscreen">
+      <svg id="icon-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M4 4h6V2H2v8h2V4zm16 0h-6V2h8v8h-2V4zm-6 16h6v-6h2v8h-8v-2zm-6 0v-6H2v8h8v-2H4z"/>
+      </svg>
+      <svg id="icon-exit" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M10 4v2H4v6H2V4a2 2 0 0 1 2-2h8v2h-6zm4 16v-2h6v-6h2v8a2 2 0 0 1-2 2h-8v-2h6zm6-14h-6V2h8a2 2 0 0 1 2 2v8h-2V6zm-16 8h2v6h6v2H4a2 2 0 0 1-2-2v-8h2v6z"/>
+      </svg>
+    </button>
 
   <header>
     <img class="logo-img" src="https://drive.google.com/thumbnail?id=1fjf65qn08ihSykXBZOOFQJJzFevHGjMh" alt="logo" />
